@@ -28,7 +28,7 @@
 Clone this repository and install the required dependencies using pip.
 
 ```bash
-git clone https://github.com/your-username/CodeSleuth.git
+git clone https://github.com/WiseGam/CodeSleuth.git
 cd CodeSleuth
 pip install -r requirements.txt
 ```
