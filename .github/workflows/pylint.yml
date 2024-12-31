@@ -10,14 +10,30 @@ jobs:
         python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
     steps:
     - uses: actions/checkout@v4
+    
     - name: Set up Python ${{ matrix.python-version }}
       uses: actions/setup-python@v3
       with:
         python-version: ${{ matrix.python-version }}
+    
     - name: Install dependencies
       run: |
         python -m pip install --upgrade pip
         pip install pylint
+    
     - name: Analysing the code with pylint
+      id: pylint
       run: |
-        pylint $(git ls-files '*.py')
+        pylint $(git ls-files '*.py') --exit-zero > pylint-report.txt
+        SCORE=$(tail -n 1 pylint-report.txt | grep -Po '\d+(\.\d+)?(?=/10)' || echo "0")
+        echo "Pylint score: $SCORE"
+        echo "score=$SCORE" >> $GITHUB_ENV
+
+    - name: Check Pylint Score
+      run: |
+        if (( $(echo "$SCORE < 8.0" | bc -l) )); then
+          echo "Pylint score is below threshold"
+          exit 1
+        fi
+      env:
+        SCORE: ${{ env.score }}
