@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.8", "3.9", "3.10", "3.11", "3.12", "3.13"]
+        python-version: ["3.x"] # Versions dynamiques de Python
     steps:
     - uses: actions/checkout@v4
     
@@ -24,8 +24,9 @@ jobs:
     - name: Analysing the code with pylint
       id: pylint
       run: |
-        pylint $(git ls-files '*.py') --exit-zero > pylint-report.txt
-        SCORE=$(tail -n 1 pylint-report.txt | grep -Po '\d+(\.\d+)?(?=/10)' || echo "0")
+        pylint . --exit-zero > pylint-report.txt
+        cat pylint-report.txt
+        SCORE=$(grep -Eo '[0-9]+\.[0-9]+(?=/10)' pylint-report.txt || echo "0")
         echo "Pylint score: $SCORE"
         echo "score=$SCORE" >> $GITHUB_ENV
 
