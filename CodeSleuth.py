@@ -7,21 +7,38 @@ import argparse
 
 # Function to analyze cyclomatic complexity per function
 def analyze_complexity(file_path):
+    """_summary_
+
+    Args:
+        file_path (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     with open(file_path, 'r') as file:
         code = file.read()
     complexity = cc_visit(code)
     complexity_results = []
-    
+
     for func in complexity:
         complexity_results.append({
             'function': func.name,
             'complexity': func.complexity
         })
-    
+
     return complexity_results
 
 # Function to detect large files
 def detect_large_files(directory, max_lines=500):
+    """_summary_
+
+    Args:
+        directory (_type_): _description_
+        max_lines (int, optional): _description_. Defaults to 500.
+
+    Returns:
+        _type_: _description_
+    """
     large_files = []
     for root, dirs, files in os.walk(directory):
         for file in files:
@@ -35,6 +52,14 @@ def detect_large_files(directory, max_lines=500):
 
 # Function to analyze dependencies between files
 def analyze_dependencies(directory):
+    """_summary_
+
+    Args:
+        directory (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     graph = nx.DiGraph()  # Directed graph for dependencies
     for root, dirs, files in os.walk(directory):
         for file in files:
@@ -51,16 +76,31 @@ def analyze_dependencies(directory):
 
 # Function to detect circular dependencies
 def detect_circular_dependencies(graph):
+    """_summary_
+
+    Args:
+        graph (_type_): _description_
+
+    Returns:
+        _type_: _description_
+    """
     return list(nx.simple_cycles(graph))  # Find all cycles in the directed graph
 
 # Function to generate complexity report with thresholds
 def generate_complexity_report(file_path, complexity_results, complexity_thresholds):
+    """_summary_
+
+    Args:
+        file_path (_type_): _description_
+        complexity_results (_type_): _description_
+        complexity_thresholds (_type_): _description_
+    """
     print(f"\nComplexity report for {file_path}:")
 
     for result in complexity_results:
         func_name = result['function']
         complexity = result['complexity']
-        
+
         # Apply complexity thresholds
         if complexity <= complexity_thresholds['low']:
             status = "Low Complexity - OK"
@@ -68,14 +108,21 @@ def generate_complexity_report(file_path, complexity_results, complexity_thresho
             status = f"Medium Complexity - Consider refactoring"
         else:
             status = f"High Complexity - Needs refactoring"
-        
+
         print(f"  - {func_name}: Complexity = {complexity} ({status})")
 
 # Main function to analyze a project
 def analyze_project(directory, max_lines=500, complexity_thresholds=None):
+    """_summary_
+
+    Args:
+        directory (_type_): _description_
+        max_lines (int, optional): _description_. Defaults to 500.
+        complexity_thresholds (_type_, optional): _description_. Defaults to None.
+    """
     if complexity_thresholds is None:
         complexity_thresholds = {'low': 5, 'medium': 10}
-    
+
     print("Analyzing complexity and dependencies...\n")
 
     # Detect large files
@@ -94,7 +141,7 @@ def analyze_project(directory, max_lines=500, complexity_thresholds=None):
             if file.endswith(".py"):
                 file_path = os.path.join(root, file)
                 complexity_results = analyze_complexity(file_path)
-                
+
                 # Generate complexity report for each file
                 generate_complexity_report(file_path, complexity_results, complexity_thresholds)
 
