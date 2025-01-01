@@ -9,21 +9,38 @@ jobs:
        matrix:
          python-version: ["3.x"]
      steps:
-     - uses: actions/checkout@v3
-     - name: Set up Python ${{ matrix.python-version }}
-       uses: actions/setup-python@v3
+     - uses: kgpl/gh-pylint@v1
        with:
-         python-version: ${{ matrix.python-version }}
-     - name: Install dependencies
-       run: |
-         python -m pip install --upgrade pip
-         pip install pylint
-         pip install -r requirements.txt
-     - name: Analysing the code with pylint
-       run: |
-         pylint $(git ls-files '*.py') --output=lint.txt || true
-     - name: Upload Artifact
-       uses: actions/upload-artifact@v4
-       with:
-         name: lint.txt
-         path: lint.txt
+       
+         # Path of the package(s) to lint, relative to the repository root. 
+         # If more than one package should be linted, simply specify all of them 
+         # with the multi-line notation like so:
+         # package-path: |
+         #   src
+         #   other_src
+         #   ...
+         # 
+         # Required
+         package-path: codesleuth
+       
+         # Version of the Python interpreter which will install all requirements of your project 
+         # and lint the package(s) specified with the `package-path` argument
+         #
+         # Required
+         python-version: 3.x
+   
+         # Path of the requirements of your project, relative to the repository root. 
+         # This can be easily changed in case you have `requirements-dev.txt`
+         #
+         # Optional, Default: requirements.txt
+         requirements-path: requirements.txt
+       
+         # Path of the README.md to update with the pylint badge, relative to the repository root.
+         #
+         # Optional, Default: README.md
+         readme-path: README.md
+   
+         # Score below which Linting should fail
+         #
+         # Optional, Default: 5
+         fail-below: 5

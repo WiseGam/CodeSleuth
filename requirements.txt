@@ -2,3 +2,4 @@ radon
 networkx
 graphviz
 argparse
+setuptools
