@@ -2,7 +2,7 @@
 
 ![Logo](assets/logo.png)
 
-**CodeSleuth.py** is an open-source tool for analyzing the architecture of a Python project, measuring the cyclomatic complexity of its code, detecting circular dependencies, and identifying overly large files. This script helps you maintain a clean codebase and improve your project's quality by providing useful metrics and recommendations.
+**code_sleuth.py** is an open-source tool for analyzing the architecture of a Python project, measuring the cyclomatic complexity of its code, detecting circular dependencies, and identifying overly large files. This script helps you maintain a clean codebase and improve your project's quality by providing useful metrics and recommendations.
 
 ---
 
@@ -53,13 +53,13 @@ If you don’t have graphviz installed, you might need to install it separately 
 To analyze a Python project, simply run the script from the terminal, specifying the path to the project you want to analyze.
 
 ```bash
-python CodeSleuth.py /path/to/your/project
+python code_sleuth.py /path/to/your/project
 ```
 
 You can also customize the analysis with the following options:
 
 ```bash
-python CodeSleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
+python code_sleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
 ```
 
 ### Options:
@@ -70,7 +70,7 @@ python CodeSleuth.py /path/to/your/project --max_lines 400 --complexity_threshol
 ### Example run:
 
 ```bash
-python CodeSleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
+python code_sleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
 ```
 
 This will generate a report that includes:
