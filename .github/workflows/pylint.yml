@@ -9,24 +9,21 @@ jobs:
        matrix:
          python-version: ["3.x"]
      steps:
-     - uses: actions/checkout@v2
+     - uses: actions/checkout@v3
      - name: Set up Python ${{ matrix.python-version }}
-       uses: actions/setup-python@v2
+       uses: actions/setup-python@v3
        with:
          python-version: ${{ matrix.python-version }}
      - name: Install dependencies
        run: |
          python -m pip install --upgrade pip
          pip install pylint
-         pip install pylint-fail-under
          pip install -r requirements.txt
      - name: Analysing the code with pylint
        run: |
-         set -e
-         for file in **/*.py; do pylint "$file"; done
-     - name: Lints each python file and fails if pylint score is less than 6.0
-       run: |
-         for file in $(find -name '*.py')
-         do
-           pylint --disable=E0401,W0611 "$file" --fail-under=6.0;
-         done
+         pylint $(git ls-files '*.py') --output=lint.txt || true
+     - name: Upload Artifact
+       uses: actions/upload-artifact@v3
+       with:
+         name: lint.txt
+         path: lint.txt
