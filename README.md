@@ -10,11 +10,11 @@
 
 ## Features
 
-- **Project structure analysis**: Scans the Python files in a project and analyzes dependencies between them.
-- **Circular dependency detection**: Identifies cycles in the dependencies between files to avoid architectural issues.
-- **Cyclomatic complexity analysis**: Measures the complexity of each function and method to assess code maintainability.
-- **Identification of large files**: Detects files that exceed 500 lines and suggests splitting them.
-- **Detailed report generation**: Generates a report that includes large files, function complexity, and dependency cycles.
+- **File Size Analysis**: Identify large files in your project that exceed a specified line count.
+- **Cyclomatic Complexity Analysis**: Evaluate the complexity of Python functions to pinpoint potential refactoring needs.
+- **Dependency Analysis**: Analyze inter-file dependencies and detect circular dependencies to enhance maintainability.
+- **Detailed Logging**: Provides real-time feedback during project analysis, including warnings for potential issues.
+- **Modular Design**: Easily integrate and extend functionality by leveraging the modular structure.
 
 ---
 
@@ -23,7 +23,7 @@
 ### Prerequisites
 
 - Python 3.x
-- Required Python libraries: `ast`, `radon`, `networkx`, `argparse`, and `graphviz` (for generating graphs if needed).
+- Required Python libraries: `ast`, `radon`, `networkx`, `argparse`, `setuptools` and `graphviz` (for generating graphs if needed).
 
 ### Install dependencies
 
@@ -42,6 +42,7 @@ radon
 networkx
 graphviz
 argparse
+setuptools
 ```
 
 If you don’t have graphviz installed, you might need to install it separately via your package manager or from Graphviz Downloads.
@@ -50,37 +51,192 @@ If you don’t have graphviz installed, you might need to install it separately 
 
 ## Usage
 
-### Running the script
+### Running the Analysis
 
-To analyze a Python project, simply run the script from the terminal, specifying the path to the project you want to analyze.
+CodeSleuth can be run as a command-line tool to analyze Python projects or imported as a module for programmatic use.
 
-```bash
-python code_sleuth.py /path/to/your/project
-```
+#### Command-Line Usage
 
-You can also customize the analysis with the following options:
+1. Analyze a Python project by specifying the directory path:
 
 ```bash
-python code_sleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
+python -m codesleuth.analysis <directory_path>
 ```
 
-### Options:
-
-- `--max_lines` : Sets the threshold for the number of lines a file can have before it is considered "too large" (default is 500).
-- `--complexity_threshold` : Sets the cyclomatic complexity threshold to flag complex functions (default is 10).
-
-### Example run:
+2. Specify thresholds for large files and cyclomatic complexity (optional):
 
 ```bash
-python code_sleuth.py /path/to/your/project --max_lines 400 --complexity_threshold 12
+python -m codesleuth.analysis <directory_path> --max-lines 400 --complexity-low 4 --complexity-medium 8
 ```
 
-This will generate a report that includes:
+3. Example:
 
-- The size of each analyzed file.
-- Cyclomatic complexity of each function.
-- Detected dependency cycles.
-- Any overly large files.
+```bash
+python -m codesleuth.analysis my_python_project --max-lines 300
+```
+
+#### Programmatic Usage
+
+You can integrate CodeSleuth's functionality into your own scripts by importing its modules.
+
+1. Analyze Complexity:
+
+```python
+from codesleuth.complexity import analyze_complexity, generate_complexity_report
+
+file_path = "my_python_project/example.py"
+complexity_results = analyze_complexity(file_path)
+thresholds = {'low': 5, 'medium': 10}
+generate_complexity_report(file_path, complexity_results, thresholds)
+```
+
+2. Detect Large Files:
+
+```python
+from codesleuth.analysis import detect_large_files
+
+large_files = detect_large_files("my_python_project", max_lines=500)
+print("Large files:", large_files)
+```
+
+3. Dependency Analysis:
+
+```python
+from codesleuth.dependencies import analyze_dependencies, detect_circular_dependencies
+
+graph = analyze_dependencies("my_python_project")
+cycles = detect_circular_dependencies(graph)
+if cycles:
+    print("Circular dependencies detected:", cycles)
+else:
+    print("No circular dependencies.")
+```
+
+#### Output Example
+
+Here’s an example of what you’ll see when running the analysis:
+
+```bash
+2025-01-01 20:54:15,367 - INFO - Starting project analysis for directory: my_python_project
+Large files (over 500 lines):
+  my_python_project/large_script.py (600 lines)
+
+Cyclomatic complexity of functions:
+  - calculate_sum: Complexity = 3 (Low Complexity - OK)
+  - parse_data: Complexity = 12 (High Complexity - Needs refactoring)
+
+Average cyclomatic complexity for the project: 7.50
+
+Analyzing dependencies...
+2025-01-01 20:54:15,407 - WARNING - Circular dependencies found: [['module_a.py', 'module_b.py']]
+```
+
+---
+
+## Module Structure
+
+CodeSleuth is modularized into submodules for better extensibility:
+
+- `codesleuth.complexity`: Functions for analyzing cyclomatic complexity.
+- `codesleuth.dependencies`: Tools for analyzing and detecting circular dependencies.
+- `codesleuth.analysis`: Orchestrates the overall analysis.
+
+---
+
+## Logging
+
+CodeSleuth uses Python’s built-in logging module to provide detailed output during analysis. Logging messages include:
+
+- **INFO**: General progress messages.
+- **WARNING**: Potential issues like large files or detected circular dependencies.
+- **DEBUG**: Detailed output for developers.
+
+### Example Log Output:
+
+```bash
+2025-01-01 20:54:15,368 - INFO - Detecting large files in directory: my_python_project
+2025-01-01 20:54:15,370 - WARNING - Large file detected: my_python_project/large_file.py (600 lines)
+2025-01-01 20:54:15,372 - INFO - Analyzing complexity for file: my_python_project/example.py
+2025-01-01 20:54:15,383 - INFO - Detecting circular dependencies...
+2025-01-01 20:54:15,384 - INFO - No circular dependencies detected.
+```
+
+---
+
+## Testing
+
+Unit tests are provided to ensure reliability and accuracy:
+
+- Run tests using `unittest`:
+
+```bash
+python -m unittest discover -s tests
+```
+
+### Example test results:
+
+```bash
+2025-01-01 20:57:38,131 - INFO - Starting project analysis for directory: temp_test_dir
+2025-01-01 20:57:38,131 - INFO - Detecting large files in directory: temp_test_dir
+2025-01-01 20:57:38,132 - WARNING - Large file detected: temp_test_dir/large_file.py (600 lines)
+Large files (over 500 lines):
+temp_test_dir/large_file.py
+
+Cyclomatic complexity of functions:
+2025-01-01 20:57:38,133 - INFO - Analyzing complexity for file: temp_test_dir/module_a.py
+2025-01-01 20:57:38,133 - INFO - Generating complexity report for file: temp_test_dir/module_a.py
+
+Complexity report for temp_test_dir/module_a.py:
+2025-01-01 20:57:38,133 - INFO - Analyzing complexity for file: temp_test_dir/simple_file.py
+2025-01-01 20:57:38,134 - INFO - Generating complexity report for file: temp_test_dir/simple_file.py
+
+Complexity report for temp_test_dir/simple_file.py:
+  - test: Complexity = 1 (Low Complexity - OK)
+2025-01-01 20:57:38,134 - INFO - Function test has complexity 1: Low Complexity - OK
+2025-01-01 20:57:38,134 - INFO - Analyzing complexity for file: temp_test_dir/large_file.py
+2025-01-01 20:57:38,142 - INFO - Generating complexity report for file: temp_test_dir/large_file.py
+
+Complexity report for temp_test_dir/large_file.py:
+2025-01-01 20:57:38,143 - INFO - Analyzing complexity for file: temp_test_dir/module_b.py
+2025-01-01 20:57:38,143 - INFO - Generating complexity report for file: temp_test_dir/module_b.py
+
+Complexity report for temp_test_dir/module_b.py:
+
+Average cyclomatic complexity for the project: 1.00
+2025-01-01 20:57:38,143 - INFO - Average cyclomatic complexity: 1.00
+
+Analyzing dependencies...
+2025-01-01 20:57:38,143 - INFO - Analyzing dependencies in directory: temp_test_dir
+2025-01-01 20:57:38,155 - INFO - Detecting circular dependencies...
+2025-01-01 20:57:38,157 - INFO - No circular dependencies detected.
+
+No circular dependencies detected.
+.2025-01-01 20:57:38,158 - INFO - Detecting large files in directory: temp_test_dir
+2025-01-01 20:57:38,159 - WARNING - Large file detected: temp_test_dir/large_file.py (600 lines)
+.2025-01-01 20:57:38,161 - INFO - Analyzing complexity for file: temp_test_file.py
+.2025-01-01 20:57:38,166 - INFO - Generating complexity report for file: temp_test_file.py
+
+Complexity report for temp_test_file.py:
+  - simple_function: Complexity = 1 (Low Complexity - OK)
+2025-01-01 20:57:38,166 - INFO - Function simple_function has complexity 1: Low Complexity - OK
+.2025-01-01 20:57:38,169 - INFO - Analyzing dependencies in directory: temp_test_dir
+.2025-01-01 20:57:38,179 - INFO - Detecting circular dependencies...
+2025-01-01 20:57:38,179 - WARNING - Circular dependencies found: [['module_b.py', 'module_a.py']]
+.
+----------------------------------------------------------------------
+Ran 6 tests in 0.049s
+
+OK
+```
+
+---
+
+## Extensibility
+
+CodeSleuth can be extended by adding new modules or enhancing existing functionality. Here’s how to add a new analysis feature:
+
+1. Create a new Python file in the `codesleuth` directory.
+2. Define your analysis logic and integrate it into the `analysis.py` orchestrator.
 
 ---
 
