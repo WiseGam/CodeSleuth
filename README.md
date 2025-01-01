@@ -2,7 +2,7 @@
 
 ![Logo](assets/logo.png)
 
-![pylint]()
+![pylint](https://img.shields.io/badge/pylint-9.44-green?logo=python&logoColor=white)
 
 **code_sleuth.py** is an open-source tool for analyzing the architecture of a Python project, measuring the cyclomatic complexity of its code, detecting circular dependencies, and identifying overly large files. This script helps you maintain a clean codebase and improve your project's quality by providing useful metrics and recommendations.
 
