@@ -6,13 +6,16 @@ setup(
     description="A Python module to analyze code complexity and dependencies.",
     long_description=open("README.md").read(),
     long_description_content_type="text/markdown",
-    author="Your Name",
-    author_email="your.email@example.com",
-    url="https://github.com/yourusername/codesleuth",
+    author="WiseGam",
+    author_email="wisegam.github@pm.me",
+    url="https://github.com/WiseGam/CodeSleuth",
     packages=find_packages(),
     install_requires=[
         "radon",
         "networkx",
+        "graphviz",
+        "argparse",
+        "setuptools"
     ],
     classifiers=[
         "Programming Language :: Python :: 3",
